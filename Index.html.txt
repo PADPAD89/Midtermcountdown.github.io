@@ -1,0 +1,457 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 US Midterm Elections Countdown</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+–red: #C8102E;
+–blue: #002868;
+–white: #F5F0E8;
+–cream: #EDE8DC;
+–gold: #B8960C;
+–dark: #0A0A0A;
+–grid: rgba(255,255,255,0.04);
+}
+
+body {
+background: var(–dark);
+color: var(–white);
+font-family: ‘Courier Prime’, monospace;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+overflow: hidden;
+position: relative;
+}
+
+/* Animated background grid */
+body::before {
+content: ‘’;
+position: fixed;
+inset: 0;
+background-image:
+linear-gradient(var(–grid) 1px, transparent 1px),
+linear-gradient(90deg, var(–grid) 1px, transparent 1px);
+background-size: 40px 40px;
+animation: gridDrift 20s linear infinite;
+pointer-events: none;
+}
+
+@keyframes gridDrift {
+0% { transform: translate(0, 0); }
+100% { transform: translate(40px, 40px); }
+}
+
+/* Radial spotlight */
+body::after {
+content: ‘’;
+position: fixed;
+inset: 0;
+background: radial-gradient(ellipse 80% 60% at 50% 50%, transparent 40%, var(–dark) 100%);
+pointer-events: none;
+}
+
+/* Noise texture */
+.noise {
+position: fixed;
+inset: 0;
+opacity: 0.03;
+background-image: url(“data:image/svg+xml,%3Csvg viewBox=‘0 0 256 256’ xmlns=‘http://www.w3.org/2000/svg’%3E%3Cfilter id=‘noise’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=‘0.9’ numOctaves=‘4’ stitchTiles=‘stitch’/%3E%3C/filter%3E%3Crect width=‘100%25’ height=‘100%25’ filter=‘url(%23noise)’/%3E%3C/svg%3E”);
+pointer-events: none;
+z-index: 1;
+}
+
+.container {
+position: relative;
+z-index: 10;
+text-align: center;
+padding: 2rem;
+max-width: 900px;
+width: 100%;
+animation: fadeUp 1s ease both;
+}
+
+@keyframes fadeUp {
+from { opacity: 0; transform: translateY(30px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+/* Stars & Stripes accent bar */
+.stripe-bar {
+display: flex;
+height: 6px;
+width: 100%;
+margin-bottom: 2.5rem;
+border-radius: 3px;
+overflow: hidden;
+animation: fadeUp 1s 0.1s ease both;
+opacity: 0;
+}
+.stripe-bar span {
+flex: 1;
+animation: stripeIn 0.6s ease both;
+}
+.stripe-bar span:nth-child(odd) { background: var(–red); }
+.stripe-bar span:nth-child(even) { background: var(–white); }
+.stripe-bar span:nth-child(1) { animation-delay: 0.1s; }
+.stripe-bar span:nth-child(2) { animation-delay: 0.15s; }
+.stripe-bar span:nth-child(3) { animation-delay: 0.2s; }
+.stripe-bar span:nth-child(4) { animation-delay: 0.25s; }
+.stripe-bar span:nth-child(5) { animation-delay: 0.3s; }
+.stripe-bar span:nth-child(6) { animation-delay: 0.35s; }
+.stripe-bar span:nth-child(7) { animation-delay: 0.4s; }
+@keyframes stripeIn {
+from { transform: scaleY(0); }
+to { transform: scaleY(1); }
+}
+
+.eyebrow {
+font-family: ‘Courier Prime’, monospace;
+font-size: 0.7rem;
+letter-spacing: 0.35em;
+color: var(–gold);
+text-transform: uppercase;
+margin-bottom: 0.75rem;
+animation: fadeUp 1s 0.2s ease both;
+opacity: 0;
+}
+
+h1 {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: clamp(2.8rem, 9vw, 7rem);
+line-height: 0.95;
+letter-spacing: 0.02em;
+margin-bottom: 0.5rem;
+animation: fadeUp 1s 0.3s ease both;
+opacity: 0;
+}
+
+h1 .red { color: var(–red); }
+h1 .blue { color: #4A7BC4; }
+
+.sub-title {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: clamp(1.2rem, 3.5vw, 2.2rem);
+letter-spacing: 0.12em;
+color: rgba(255,255,255,0.35);
+margin-bottom: 3rem;
+animation: fadeUp 1s 0.4s ease both;
+opacity: 0;
+}
+
+/* Countdown grid */
+.countdown {
+display: flex;
+justify-content: center;
+gap: clamp(0.8rem, 3vw, 2rem);
+margin-bottom: 2.5rem;
+animation: fadeUp 1s 0.5s ease both;
+opacity: 0;
+}
+
+.unit {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 0.6rem;
+}
+
+.unit-box {
+position: relative;
+width: clamp(72px, 15vw, 140px);
+height: clamp(80px, 17vw, 160px);
+display: flex;
+align-items: center;
+justify-content: center;
+border: 1px solid rgba(255,255,255,0.08);
+border-radius: 4px;
+overflow: hidden;
+background: rgba(255,255,255,0.03);
+backdrop-filter: blur(4px);
+transition: border-color 0.3s;
+}
+.unit-box::before {
+content: ‘’;
+position: absolute;
+inset: 0;
+background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 50%);
+pointer-events: none;
+}
+/* Flip line */
+.unit-box::after {
+content: ‘’;
+position: absolute;
+left: 0; right: 0;
+top: 50%;
+height: 1px;
+background: rgba(255,255,255,0.06);
+}
+
+.unit-box:hover { border-color: rgba(200, 16, 46, 0.4); }
+
+.num {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: clamp(2.5rem, 8vw, 6rem);
+line-height: 1;
+letter-spacing: 0.02em;
+position: relative;
+z-index: 1;
+transition: transform 0.15s ease, opacity 0.15s ease;
+}
+.num.flip {
+animation: flip 0.3s ease;
+}
+@keyframes flip {
+0%   { transform: translateY(0) scale(1); opacity: 1; }
+40%  { transform: translateY(-8px) scale(0.96); opacity: 0.4; }
+60%  { transform: translateY(6px) scale(0.96); opacity: 0.4; }
+100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.days .num   { color: var(–red); text-shadow: 0 0 30px rgba(200,16,46,0.4); }
+.hours .num  { color: var(–white); }
+.mins .num   { color: var(–white); }
+.secs .num   { color: #4A7BC4; text-shadow: 0 0 30px rgba(74,123,196,0.4); }
+
+.unit-label {
+font-size: clamp(0.55rem, 1.5vw, 0.7rem);
+letter-spacing: 0.25em;
+text-transform: uppercase;
+color: rgba(255,255,255,0.35);
+font-weight: 700;
+}
+
+.separator {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: clamp(2rem, 6vw, 4.5rem);
+color: rgba(255,255,255,0.15);
+align-self: flex-start;
+padding-top: clamp(10px, 2vw, 22px);
+line-height: 1;
+animation: blink 1s step-end infinite;
+}
+@keyframes blink {
+0%, 100% { opacity: 1; }
+50% { opacity: 0.1; }
+}
+
+/* Election date */
+.election-date {
+font-size: 0.75rem;
+letter-spacing: 0.2em;
+color: rgba(255,255,255,0.3);
+text-transform: uppercase;
+margin-bottom: 2.5rem;
+animation: fadeUp 1s 0.6s ease both;
+opacity: 0;
+}
+.election-date strong {
+color: var(–gold);
+font-style: normal;
+}
+
+/* Progress bar */
+.progress-wrap {
+width: 100%;
+max-width: 520px;
+margin: 0 auto 1rem;
+animation: fadeUp 1s 0.7s ease both;
+opacity: 0;
+}
+.progress-label {
+display: flex;
+justify-content: space-between;
+font-size: 0.6rem;
+letter-spacing: 0.15em;
+color: rgba(255,255,255,0.25);
+text-transform: uppercase;
+margin-bottom: 0.5rem;
+}
+.progress-track {
+height: 3px;
+background: rgba(255,255,255,0.07);
+border-radius: 2px;
+overflow: hidden;
+}
+.progress-fill {
+height: 100%;
+background: linear-gradient(90deg, var(–red) 0%, #4A7BC4 100%);
+border-radius: 2px;
+transition: width 1s linear;
+}
+
+/* Bottom stripe */
+.bottom-bar {
+margin-top: 3rem;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 1rem;
+animation: fadeUp 1s 0.8s ease both;
+opacity: 0;
+}
+.star {
+color: var(–gold);
+font-size: 1rem;
+animation: twinkle 2s ease-in-out infinite;
+}
+.star:nth-child(2) { animation-delay: 0.3s; }
+.star:nth-child(4) { animation-delay: 0.6s; }
+@keyframes twinkle {
+0%,100% { opacity: 1; transform: scale(1); }
+50% { opacity: 0.4; transform: scale(0.85); }
+}
+.bottom-text {
+font-size: 0.65rem;
+letter-spacing: 0.2em;
+text-transform: uppercase;
+color: rgba(255,255,255,0.2);
+}
+
+/* Glitch effect on title hover */
+h1:hover .red {
+animation: glitch 0.4s steps(2) both;
+}
+@keyframes glitch {
+0%   { text-shadow: 2px 0 var(–blue); clip-path: inset(0 0 80% 0); }
+25%  { text-shadow: -2px 0 #00f; clip-path: inset(20% 0 40% 0); }
+50%  { text-shadow: 3px 0 var(–blue); clip-path: inset(60% 0 0 0); }
+75%  { text-shadow: -3px 0 var(–red); clip-path: inset(40% 0 20% 0); }
+100% { text-shadow: none; clip-path: none; }
+}
+</style>
+
+</head>
+<body>
+<div class="noise"></div>
+<div class="container">
+  <div class="stripe-bar">
+    <span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span>
+  </div>
+
+  <p class="eyebrow">★ Countdown to ★</p>
+
+  <h1>
+    <span class="red">United States</span><br>
+    <span class="blue">Midterm</span> Elections
+  </h1>
+
+  <p class="sub-title">November 3, 2026</p>
+
+  <div class="countdown">
+    <div class="unit days">
+      <div class="unit-box"><span class="num" id="days">000</span></div>
+      <span class="unit-label">Days</span>
+    </div>
+    <div class="separator">:</div>
+    <div class="unit hours">
+      <div class="unit-box"><span class="num" id="hours">00</span></div>
+      <span class="unit-label">Hours</span>
+    </div>
+    <div class="separator">:</div>
+    <div class="unit mins">
+      <div class="unit-box"><span class="num" id="mins">00</span></div>
+      <span class="unit-label">Minutes</span>
+    </div>
+    <div class="separator">:</div>
+    <div class="unit secs">
+      <div class="unit-box"><span class="num" id="secs">00</span></div>
+      <span class="unit-label">Seconds</span>
+    </div>
+  </div>
+
+  <p class="election-date">
+    Election Day &mdash; <strong>Tuesday, November 3, 2026</strong> &mdash; All 435 House seats &amp; 34 Senate seats
+  </p>
+
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span>Today</span>
+      <span id="pct">—% elapsed since Jan 20, 2025</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <span class="star">★</span>
+    <span class="bottom-text">Every vote shapes the Republic</span>
+    <span class="star">★</span>
+    <span class="bottom-text">Register &bull; Inform &bull; Vote</span>
+    <span class="star">★</span>
+  </div>
+</div>
+
+<script>
+  const ELECTION = new Date('2026-11-03T06:00:00Z'); // polls open
+  const TERM_START = new Date('2025-01-20T12:00:00Z');
+  const TERM_END   = ELECTION;
+
+  const $d  = document.getElementById('days');
+  const $h  = document.getElementById('hours');
+  const $m  = document.getElementById('mins');
+  const $s  = document.getElementById('secs');
+  const $p  = document.getElementById('progress');
+  const $pt = document.getElementById('pct');
+
+  function pad(n, len = 2) { return String(n).padStart(len, '0'); }
+
+  function animateFlip(el, val) {
+    const padded = el.id === 'days' ? pad(val, 3) : pad(val, 2);
+    if (el.textContent !== padded) {
+      el.classList.remove('flip');
+      void el.offsetWidth; // reflow
+      el.classList.add('flip');
+      el.textContent = padded;
+    }
+  }
+
+  function tick() {
+    const now  = new Date();
+    const diff = ELECTION - now;
+
+    if (diff <= 0) {
+      $d.textContent = '000';
+      $h.textContent = '00';
+      $m.textContent = '00';
+      $s.textContent = '00';
+      document.querySelector('.sub-title').textContent = '🗳 Election Day is HERE!';
+      return;
+    }
+
+    const totalSecs = Math.floor(diff / 1000);
+    const secs  = totalSecs % 60;
+    const mins  = Math.floor(totalSecs / 60) % 60;
+    const hours = Math.floor(totalSecs / 3600) % 24;
+    const days  = Math.floor(totalSecs / 86400);
+
+    animateFlip($d, days);
+    animateFlip($h, hours);
+    animateFlip($m, mins);
+    animateFlip($s, secs);
+
+    // Progress bar: % of time from inauguration → election day elapsed
+    const totalSpan = TERM_END - TERM_START;
+    const elapsed   = now - TERM_START;
+    const pct = Math.min(100, Math.max(0, (elapsed / totalSpan) * 100));
+    $p.style.width = pct.toFixed(2) + '%';
+    $pt.textContent = pct.toFixed(1) + '% elapsed since Jan 20, 2025';
+  }
+
+  tick();
+  setInterval(tick, 1000);
+</script>
+
+</body>
+</html>
